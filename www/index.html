@@ -51,9 +51,9 @@
           },
           
           onDeviceReady: function(id) {
-              console.log('Received Event: ' + id);
+              console.log('Received Event: deviceready');
               var output = document.getElementById('output');
-              output.innerHTML += 'Received Event: ' + id + '<br/><br/>';
+              output.innerHTML += 'Received Event: deviceready<br/><br/>';
               boot();        // boot on deviceready ... only cordova apps
           }
       };
