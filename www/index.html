@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base href=".">
+  <title>PouchDB Cordova WebSQL issue</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+</head>
+
+<body>
+  <h3>Modify index.html to get PouchDB to work</h3>
+  <p>Local PouchDB db instantiation object:</p>
+  <p id="output" style="word-break: break-all"></p>
+
+  <!-- Uncomment this to make it work with 5.4.4 -->
+  <!--<script>var SQLitePlugin = {}; </script> -->
+
+  <script type="text/javascript" src="cordova.js"></script>
+  <script type="text/javascript" src="scripts/pouchdb_5.4.4.js"></script>
+  <!--<script type="text/javascript" src="scripts/pouchdb_5.3.2.js"></script>-->
+  
+  <script>
+      
+    var localDB;  
+
+    function boot() {      
+      localDB = new PouchDB('localdb', {revs_limit: 100, adapter: 'websql', auto_compaction: true});
+      var output = document.getElementById('output');
+      output.innerHTML += 'localDB: <br/><br/>' + JSON.stringify(localDB) + '<br/><br/>taskqueue.failed: <b>' + localDB.taskqueue.failed + '</b><br/><br/>';
+      output.innerHTML += localDB.taskqueue.failed === false ? 'PouchDB works in WKWebView !!!!' : 'Cant use Pouch :(';
+    }
+    
+    if (typeof cordova === 'undefined'){
+        boot();    // boot if not cordova
+    } else {
+   
+      var app = {
+          // Application Constructor
+          initialize: function() {
+              this.bindEvents();
+          },
+          
+          // Bind any events that are required on startup. Common events are:
+          // 'load', 'deviceready', 'offline', and 'online'.
+          bindEvents: function() {
+              document.addEventListener('deviceready', this.onDeviceReady, false);
+          },
+          // deviceready Event Handler
+          //
+          // The scope of 'this' is the event. In order to call the 'receivedEvent'
+          // function, we must explicitly call 'app.receivedEvent(...);'
+          onDeviceReady: function() {
+              app.receivedEvent('deviceready');
+          },
+          // Update DOM on a Received Event
+          receivedEvent: function(id) {
+              console.log('Received Event: ' + id);
+              var output = document.getElementById('output');
+              output.innerHTML += 'Received Event: ' + id + '<br/><br/>';
+              boot();                            // boot on deviceready ... only cordova apps
+          }
+      };
+      app.initialize();
+    }
+    </script>
+</body>
+
+</html>
